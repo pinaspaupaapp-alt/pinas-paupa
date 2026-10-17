@@ -1,15 +1,17 @@
-name: pinas_paupa
-description: Pinas Paupa app
-publish_to: none
-version: 1.0.0+1
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.2
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-flutter:
-  uses-material-design: true
+name: Build Pinas Paupa APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build apk --release --no-tree-shake-icons
