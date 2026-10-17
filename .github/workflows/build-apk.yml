@@ -12,10 +12,39 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Adopt new Flutter - Fix old Gradle
+      - name: Adopt New Flutter - Full Recreate
         run: |
           rm -rf android
           flutter create . --platforms=android --project-name pinas_paupa
+          mkdir -p lib
+          cat > lib/main.dart << 'EOF'
+          import 'package:flutter/material.dart';
+          void main() => runApp(const MyApp());
+          class MyApp extends StatelessWidget {
+            const MyApp({super.key});
+            @override
+            Widget build(BuildContext context) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: Scaffold(
+                  appBar: AppBar(title: const Text('Pinas Paupa'), backgroundColor: Colors.green),
+                  body: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle, size: 100, color: Colors.green),
+                        SizedBox(height: 20),
+                        Text('Pinas Paupa - Bag-ong Flutter!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 10),
+                        Text('GREEN NA GYUD!'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          }
+          EOF
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
