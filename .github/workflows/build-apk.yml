@@ -12,10 +12,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: |
-          if [ ! -f android/app/build.gradle ]; then
-            flutter create . --platforms=android --project-name pinas_paupa
-          fi
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
