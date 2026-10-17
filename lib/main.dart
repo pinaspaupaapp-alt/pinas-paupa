@@ -15,4 +15,28 @@ class _S extends State<SubPlan>{String pay='GCash';@override Widget build(BuildC
 class Wish extends StatelessWidget{const Wish({super.key});@override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Wishlists')),body:const Center(child:Text('No wishlist')));}
 class Trips extends StatelessWidget{const Trips({super.key});@override Widget build(BuildContext c)=>Scaffold(body:Center(child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[const Icon(Icons.map,size:80,color:Colors.blueGrey),Text('2 listings on map')])));}
 class Msgs extends StatelessWidget{const Msgs({super.key});@override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Messages')),body:ListView.builder(itemCount:Data.list.length,itemBuilder:(ctx,i){final l=Data.list[i];return ListTile(leading:CircleAvatar(child:Text(l.host[0])),title:Text('Chat with ${l.host}'),subtitle:Text(l.t),onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>ChatPage(l:l))));}));}
-class Profile extends StatelessWidget{const Profile({super.key});@override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Profile',style:TextStyle(fontSize:26,fontWeight:FontWeight.bold))),body:ListView(children:[ListTile(leading:const Icon(Icons.settings),title:const Text('Account settings'),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>const SubPlan()))),ListTile(leading:const Icon(Icons.card_membership,color:Color(0xFF1A8E3E)),title:const Text('Subscription ₱1,999/year'),subtitle:const Text('Bayad yearly para maka upload'),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>const SubPlan()))),const Divider(),const ListTile(leading:Icon(Icons.help_outline),title:Text('Get help')),const ListTile(leading:Icon(Icons.logout),title:Text('Log out'))]));}
+class Profile extends StatelessWidget{const Profile({super.key});@override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Profile',style:TextStyle(fontSize:26,fontWeight:FontWeight.bold))),body:ListView(children:[ListTile(leading:const Icon(Icons.settings),title:const Text('Account settings'),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>const SubPlan()))),ListTile(leading:const Icon(Icons.card_membership,color:Color(0xFF1A8E3E)),title:const Text('Subscription ₱1,999/year'),subtitle:const Text('Bayad yearly para maka upload'),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>const SubPlan()))),const Divider(),const ListTile(leading:Icon(Icons.help_outline),title:Text('Get help')),const ListTile(leading:Icon(Icons.logout),title:Text('Log out'))]));}COMMIT!
+STEP 2: Pagka-commit ng main.dart - balikan ang workflow - gawing SIMPLE GREEN na hindi nag-o-overwrite!
+Punta ulit:javascripthttps://github.com/pinaspaupaapp-alt/pinas-paupa/edit/main/.github/workflows/build-apk.ymlDELETE LAHAT - PASTE KANI - SIMPLE LANG - WALANG cat > main.dart!yamlname: Build Pinas Paupa APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: |
+          rm -rf android
+          flutter create . --platforms=android --project-name pinas_paupa
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/app-release.apk
