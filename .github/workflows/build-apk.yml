@@ -13,19 +13,24 @@ jobs:
         with:
           channel: 'stable'
       - run: |
+          if [ ! -f android/app/build.gradle ]; then
+            rm -rf android
+            flutter create . --platforms=android --project-name pinas_paupa
+          fi
           cat > lib/main.dart << 'EOF'
           import 'package:flutter/material.dart';
           void main() {
             runApp(MaterialApp(
               debugShowCheckedModeBanner: false,
               home: Scaffold(
-                appBar: AppBar(title: Text('Pinas Paupa')),
-                body: Center(child: Text('GREEN NA!')),
+                appBar: AppBar(backgroundColor: Color(0xFF1A8E3E), title: Text('Pinas Paupa 🇵🇭')),
+                body: Center(child: Text('GREEN NA! - FIXED ANDROID')),
               ),
             ));
           }
           EOF
       - run: flutter pub get
+      - run: flutter clean
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
