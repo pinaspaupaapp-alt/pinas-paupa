@@ -1,5 +1,5 @@
 name: Build Pinas Paupa APK
-on:
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
               debugShowCheckedModeBanner: false,
               home: Scaffold(
                 appBar: AppBar(title: Text('Pinas Paupa')),
-                body: Center(child: Text('GREEN NA! - #30')),
+                body: Center(child: Text('GREEN NA!')),
               ),
             ));
           }
@@ -30,4 +30,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: build/app/outputs/flutter-apk/app-release.apk[push]
+          path: build/app/outputs/flutter-apk/app-release.apk
