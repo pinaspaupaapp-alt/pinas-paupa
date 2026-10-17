@@ -29,7 +29,7 @@ class _S extends State<PinasPaupa>{
   void openReg(){showModalBottomSheet(context:context,isScrollControlled:true,backgroundColor:Colors.white,shape:RoundedRectangleBorder(borderRadius:BorderRadius.vertical(top:Radius.circular(20))),builder:(_)=>RegSheet(onDone:(){setState(()=>reg=true);Navigator.pop(context);}));}
 
   @override Widget build(BuildContext c){
-    List<String> titles=['Pinas Paupa 🇵🇭','Wishlists','Trips','Messages','Profile'];
+    List<String> titles=['Pinas Paupa','Wishlists','Trips','Messages','Profile'];
     return Scaffold(
       appBar:AppBar(title:Text(titles[nav]),backgroundColor:Color(0xFF2E7D32)),
       body: nav==0 ? ExploreContent(props:props,reg:reg,gt:gt,onReg:openReg) : nav==1 ? Center(child:Text('Wishlists')) : nav==2 ? Center(child:Text('Trips')) : nav==3 ? Center(child:Text('Messages')) : ProfileContent(name:reg?'Sonny SIMBAJON':'Guest',isReg:reg,onReg:openReg),
@@ -59,11 +59,11 @@ class ExploreContent extends StatelessWidget{
         _cat(c,'Lot Sale',Icons.landscape,Color(0xFFEFEBE9),Colors.brown),_cat(c,'Rent Car',Icons.directions_car,Color(0xFFF3E5F5),Colors.purple),
         _cat(c,'Food',Icons.fastfood,Color(0xFFFBE9E7),Colors.deepOrange),_cat(c,'Services',Icons.build,Color(0xFFE0F2F1),Colors.teal),
       ])),
-      Padding(padding:EdgeInsets.all(15),child:Text('Popular - ${props.length} listings',style:TextStyle(fontWeight:FontWeight.bold))),
-      ...props.take(6).map((p){int com=(p['price']*0.15).toInt();return Card(margin:EdgeInsets.symmetric(horizontal:15,vertical:8),child:Column(children:[Image.network(p['img'],height:160,width:double.infinity,fit:BoxFit.cover,errorBuilder:(a,b,cc)=>Container(height:160,color:Colors.grey.shade300,child:Icon(Icons.image))),ListTile(title:Text(p['title'],style:TextStyle(fontWeight:FontWeight.bold)),subtitle:Text('${p['loc']} - ₱${p['price']}')),Row(children:[Expanded(child:OutlinedButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>ChatPage(owner:p['owner'],title:p['title']))),child:Text('Chat'))),SizedBox(width:8),Expanded(child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF6B00)),onPressed:()=>showModalBottomSheet(context:c,builder:(_)=>PaySheet(price:p['price'],com:com,gt:gt)),child:Text('Book')))])]));}).toList(),
+      Padding(padding:EdgeInsets.all(15),child:Text('Popular',style:TextStyle(fontWeight:FontWeight.bold))),
+      for(var p in props.take(6)) Card(margin:EdgeInsets.symmetric(horizontal:15,vertical:8),child:Column(children:[Image.network(p['img'],height:160,width:double.infinity,fit:BoxFit.cover,errorBuilder:(a,b,cc)=>Container(height:160,color:Color(0xFFEEEEEE),child:Icon(Icons.image))),ListTile(title:Text(p['title'],style:TextStyle(fontWeight:FontWeight.bold)),subtitle:Text('${p['loc']} - ₱${p['price']}')),Row(children:[Expanded(child:OutlinedButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>ChatPage(owner:p['owner'],title:p['title']))),child:Text('Chat'))),SizedBox(width:8),Expanded(child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF6B00)),onPressed:()=>showModalBottomSheet(context:c,builder:(_)=>PaySheet(price:p['price'],com:(p['price']*0.15).toInt(),gt:gt)),child:Text('Book')))])])),
     ]);
   }
-  Widget _cat(BuildContext c,String t,IconData i,Color bg,Color ic){var count=props.where((e)=>e['cat']==t).length;return InkWell(onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>CatPage(cat:t,props:props,gt:gt))),child:Container(margin:EdgeInsets.all(5),decoration:BoxDecoration(color:bg,borderRadius:BorderRadius.circular(12),border:Border.all(color:ic.withOpacity(0.4))),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[Row(mainAxisAlignment:MainAxisAlignment.center,children:[Icon(i,color:ic,size:16),SizedBox(width:4),Text(t,style:TextStyle(fontWeight:FontWeight.bold,color:ic,fontSize:11))]),Text('$count listings',style:TextStyle(fontSize:9,color:ic))])));}
+  Widget _cat(BuildContext c,String t,IconData i,Color bg,Color ic){var count=props.where((e)=>e['cat']==t).length;return InkWell(onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>CatPage(cat:t,props:props,gt:gt))),child:Container(margin:EdgeInsets.all(5),decoration:BoxDecoration(color:bg,borderRadius:BorderRadius.circular(12),border:Border.all(color:ic,width:1)),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[Row(mainAxisAlignment:MainAxisAlignment.center,children:[Icon(i,color:ic,size:16),SizedBox(width:4),Text(t,style:TextStyle(fontWeight:FontWeight.bold,color:ic,fontSize:11))]),Text('$count listings',style:TextStyle(fontSize:9,color:ic))])));}
 }
 
 class RegSheet extends StatefulWidget{final VoidCallback onDone;RegSheet({required this.onDone});@override State<RegSheet> createState()=>_RS;}
@@ -71,61 +71,48 @@ class _RS extends State<RegSheet>{
   int step=0;
   var email=TextEditingController(text:'reysimbajon1982@gmail.com');
   var otp=TextEditingController();
-  Widget buildStep0(){
-    return Column(children:[
-      Text('Log in or sign up',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
-      SizedBox(height:15),
-      TextField(controller:email,decoration:InputDecoration(labelText:'Phone or email',border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
-      SizedBox(height:15),
-      SizedBox(width:double.infinity,child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF385C),padding:EdgeInsets.all(16)),onPressed:(){setState(()=>step=1);},child:Text('Continue',style:TextStyle(color:Colors.white)))),
-      SizedBox(height:10),
-      Container(padding:EdgeInsets.all(12),decoration:BoxDecoration(color:Color(0xFFF5F5F5),borderRadius:BorderRadius.circular(12)),child:Column(children:[
-        Row(children:[Icon(Icons.verified,color:Colors.green,size:16),SizedBox(width:6),Expanded(child:Text('Auto commission GoTyme/GCash - 15%',style:TextStyle(fontSize:11,fontWeight:FontWeight.bold)))]),
-        Row(children:[Icon(Icons.payment,color:Colors.orange,size:16),SizedBox(width:6),Expanded(child:Text('GCash, Maya, GoTyme, BPI, BDO, Metrobank',style:TextStyle(fontSize:11)))]),
-      ])),
-    ]);
-  }
-  Widget buildStep1(){
-    return Column(children:[
-      Text('Confirm your number',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
-      SizedBox(height:10),
-      Text('Enter the code we sent to ${email.text}. OTP expires in 60 seconds.',style:TextStyle(fontSize:13),textAlign:TextAlign.center),
-      SizedBox(height:15),
-      TextField(controller:otp,keyboardType:TextInputType.number,decoration:InputDecoration(labelText:'Enter 6-digit OTP - 123456',border:OutlineInputBorder(borderRadius:BorderRadius.circular(12))),textAlign:TextAlign.center,style:TextStyle(letterSpacing:6,fontSize:20)),
-      SizedBox(height:10),
-      Row(children:[
-        TextButton(onPressed:(){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('OTP resent to ${email.text}')));},child:Text('Resend code')),
-        Spacer(),
-        ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Colors.black),onPressed:(){if(otp.text.length>=4){widget.onDone();} else {ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Enter OTP')));}},child:Text('Verify & Register',style:TextStyle(color:Colors.white))),
-      ]),
-    ]);
-  }
   @override Widget build(BuildContext context){
     return Padding(padding:EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom),child:Container(padding:EdgeInsets.all(20),child:Column(mainAxisSize:MainAxisSize.min,children:[
-      Container(width:40,height:5,decoration:BoxDecoration(color:Colors.grey.shade300,borderRadius:BorderRadius.circular(5))),
+      Container(width:40,height:5,decoration:BoxDecoration(color:Color(0xFFE0E0E0),borderRadius:BorderRadius.circular(5))),
       SizedBox(height:15),
       Icon(Icons.home_rounded,color:Color(0xFFFF385C),size:50),
-      step==0 ? buildStep0() : buildStep1(),
+      SizedBox(height:10),
+      if(step==0) Column(children:[
+        Text('Log in or sign up',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+        SizedBox(height:15),
+        TextField(controller:email,decoration:InputDecoration(labelText:'Phone or email',border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+        SizedBox(height:15),
+        SizedBox(width:double.infinity,child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF385C),padding:EdgeInsets.all(16)),onPressed:(){setState(()=>step=1);},child:Text('Continue',style:TextStyle(color:Colors.white)))),
+      ]) else Column(children:[
+        Text('Confirm your number',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+        SizedBox(height:10),
+        Text('Enter code sent to ${email.text}',style:TextStyle(fontSize:13),textAlign:TextAlign.center),
+        SizedBox(height:15),
+        TextField(controller:otp,keyboardType:TextInputType.number,decoration:InputDecoration(labelText:'Enter 6-digit OTP',border:OutlineInputBorder(borderRadius:BorderRadius.circular(12))),textAlign:TextAlign.center,style:TextStyle(letterSpacing:6,fontSize:20)),
+        SizedBox(height:10),
+        Row(children:[
+          TextButton(onPressed:(){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('OTP resent')));},child:Text('Resend')),
+          Spacer(),
+          ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Colors.black),onPressed:(){widget.onDone();},child:Text('Verify & Register',style:TextStyle(color:Colors.white))),
+        ]),
+      ]),
     ])));
   }
 }
 
-class CatPage extends StatelessWidget{final String cat;final List props;final String gt;CatPage({required this.cat,required this.props,required this.gt});@override Widget build(BuildContext c){var f=props.where((e)=>e['cat']==cat).toList();return Scaffold(appBar:AppBar(title:Text('$cat - ${f.length} listings'),backgroundColor:Color(0xFF2E7D32)),body:ListView.builder(itemCount:f.length,itemBuilder:(c,i){var p=f[i];return Card(margin:EdgeInsets.all(10),child:Column(children:[Image.network(p['img'],height:180,width:double.infinity,fit:BoxFit.cover,errorBuilder:(a,b,cc)=>Container(height:180,color:Colors.grey.shade300)),ListTile(title:Text(p['title'],style:TextStyle(fontWeight:FontWeight.bold)),subtitle:Text('${p['loc']} - ₱${p['price']}')),Row(children:[Expanded(child:OutlinedButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>ChatPage(owner:p['owner'],title:p['title']))),child:Text('Chat'))),SizedBox(width:8),Expanded(child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF6B00)),onPressed:()=>showModalBottomSheet(context:c,builder:(_)=>PaySheet(price:p['price'],com:(p['price']*0.15).toInt(),gt:gt)),child:Text('Book')))])]));}));}}
+class CatPage extends StatelessWidget{final String cat;final List props;final String gt;CatPage({required this.cat,required this.props,required this.gt});@override Widget build(BuildContext c){var f=props.where((e)=>e['cat']==cat).toList();return Scaffold(appBar:AppBar(title:Text('$cat - ${f.length}'),backgroundColor:Color(0xFF2E7D32)),body:ListView.builder(itemCount:f.length,itemBuilder:(c,i){var p=f[i];return Card(margin:EdgeInsets.all(10),child:Column(children:[Image.network(p['img'],height:180,width:double.infinity,fit:BoxFit.cover,errorBuilder:(a,b,cc)=>Container(height:180,color:Color(0xFFEEEEEE))),ListTile(title:Text(p['title'],style:TextStyle(fontWeight:FontWeight.bold)),subtitle:Text('${p['loc']} - ₱${p['price']}')),Row(children:[Expanded(child:OutlinedButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>ChatPage(owner:p['owner'],title:p['title']))),child:Text('Chat'))),SizedBox(width:8),Expanded(child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFFFF6B00)),onPressed:()=>showModalBottomSheet(context:c,builder:(_)=>PaySheet(price:p['price'],com:(p['price']*0.15).toInt(),gt:gt)),child:Text('Book')))])]));}));}}
 class ProfileContent extends StatelessWidget{final String name;final bool isReg;final VoidCallback onReg;ProfileContent({required this.name,required this.isReg,required this.onReg});@override Widget build(BuildContext c){return ListView(children:[Card(margin:EdgeInsets.all(20),child:Padding(padding:EdgeInsets.all(20),child:Column(children:[CircleAvatar(radius:40,child:Text(name[0])),Text(name,style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),if(!isReg)ElevatedButton(onPressed:onReg,child:Text('REGISTER WITH OTP'))])))]);}}
 class ChatPage extends StatefulWidget{final String owner,title;ChatPage({required this.owner,required this.title});@override State<ChatPage> createState()=>_CS();}
-class _CS extends State<ChatPage>{List<String> msgs=[];var ctrl=TextEditingController();@override void initState(){super.initState();msgs=['Hello ${widget.owner}, available pa?','Yes boss available!'];}@override Widget build(BuildContext c){return Scaffold(appBar:AppBar(title:Text('Chat ${widget.owner}')),body:Column(children:[Expanded(child:ListView.builder(itemCount:msgs.length,itemBuilder:(c,i)=>Align(alignment:i%2==0?Alignment.centerRight:Alignment.centerLeft,child:Container(margin:EdgeInsets.all(8),padding:EdgeInsets.all(12),decoration:BoxDecoration(color:i%2==0?Color(0xFF2E7D32):Colors.grey.shade200,borderRadius:BorderRadius.circular(15)),child:Text(msgs[i]))))),Row(children:[Expanded(child:TextField(controller:ctrl,decoration:InputDecoration(hintText:'Type...',border:OutlineInputBorder()))),IconButton(icon:Icon(Icons.send),onPressed:(){if(ctrl.text.isNotEmpty){setState(()=>msgs.add(ctrl.text));ctrl.clear();}})])]));}}
+class _CS extends State<ChatPage>{List<String> msgs=[];var ctrl=TextEditingController();@override void initState(){super.initState();msgs=['Hello ${widget.owner}, available pa?','Yes boss available!'];}@override Widget build(BuildContext c){return Scaffold(appBar:AppBar(title:Text('Chat ${widget.owner}')),body:Column(children:[Expanded(child:ListView.builder(itemCount:msgs.length,itemBuilder:(c,i)=>Align(alignment:i%2==0?Alignment.centerRight:Alignment.centerLeft,child:Container(margin:EdgeInsets.all(8),padding:EdgeInsets.all(12),decoration:BoxDecoration(color:i%2==0?Color(0xFF2E7D32):Color(0xFFEEEEEE),borderRadius:BorderRadius.circular(15)),child:Text(msgs[i]))))),Row(children:[Expanded(child:TextField(controller:ctrl,decoration:InputDecoration(hintText:'Type...',border:OutlineInputBorder()))),IconButton(icon:Icon(Icons.send),onPressed:(){if(ctrl.text.isNotEmpty){setState(()=>msgs.add(ctrl.text));ctrl.clear();}})])]));}}
 class PostPage extends StatefulWidget{final Function(Map<String,dynamic>) onAdd;PostPage({required this.onAdd});@override State<PostPage> createState()=>_PS();}
 class _PS extends State<PostPage>{
   var t=TextEditingController();var pr=TextEditingController();var img=TextEditingController(text:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600');String cat='House Rent';
-  List<String> samples=['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600','https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600','https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600','https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600','https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600','https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600'];
   @override Widget build(BuildContext c){
     return Scaffold(appBar:AppBar(title:Text('MAG POST + PICTURE')),
       body:Padding(padding:EdgeInsets.all(15),child:ListView(children:[
-        Text('Pili sample picture:',style:TextStyle(fontWeight:FontWeight.bold)),
-        SizedBox(height:90,child:ListView.builder(scrollDirection:Axis.horizontal,itemCount:samples.length,itemBuilder:(c,i)=>InkWell(onTap:()=>setState(()=>img.text=samples[i]),child:Container(margin:EdgeInsets.all(5),width:90,decoration:BoxDecoration(border:Border.all(color:img.text==samples[i]?Colors.orange:Colors.grey,width:3)),child:Image.network(samples[i],fit:BoxFit.cover,errorBuilder:(a,b,cc)=>Container(color:Colors.grey)))))),
         TextField(controller:img,decoration:InputDecoration(labelText:'Picture Link',border:OutlineInputBorder()),onChanged:(v)=>setState((){})),
         SizedBox(height:8),
-        Container(height:150,decoration:BoxDecoration(border:Border.all(color:Colors.grey)),child:Image.network(img.text,fit:BoxFit.cover,width:double.infinity,errorBuilder:(a,b,cc)=>Center(child:Text('Preview - Pili sa taas')))),
+        Container(height:150,decoration:BoxDecoration(border:Border.all(color:Color(0xFF9E9E9E))),child:Image.network(img.text,fit:BoxFit.cover,width:double.infinity,errorBuilder:(a,b,cc)=>Center(child:Text('Preview')))),
         DropdownButton<String>(value:cat,isExpanded:true,items:['Airbnb','House Rent','House Sale','Lot Rent','Lot Sale','Rent Car','Food','Services'].map((e)=>DropdownMenuItem(value:e,child:Text(e))).toList(),onChanged:(v)=>setState(()=>cat=v!)),
         TextField(controller:t,decoration:InputDecoration(labelText:'Title',border:OutlineInputBorder())),
         TextField(controller:pr,decoration:InputDecoration(labelText:'Price',border:OutlineInputBorder()),keyboardType:TextInputType.number),
@@ -133,4 +120,4 @@ class _PS extends State<PostPage>{
       ])));
   }
 }
-class PaySheet extends StatelessWidget{final int price,com;final String gt;PaySheet({required this.price,required this.com,required this.gt});@override Widget build(BuildContext c){return Container(padding:EdgeInsets.all(20),child:Column(mainAxisSize:MainAxisSize.min,children:[Text('Bayad ₱$price Commission ₱$com AUTO $gt',style:TextStyle(fontWeight:FontWeight.bold)),Wrap(spacing:5,children:['GCash','Maya','GoTyme','BPI','BDO','Metrobank'].map((e)=>Chip(label:Text(e))).toList()),ElevatedButton(onPressed:(){Navigator.pop(c);ScaffoldMessenger.of(c).showSnackBar(SnackBar(content:Text('✅ Bayad na!')));},child:Text('BAYARAN ₱$price'))]));}}
+class PaySheet extends StatelessWidget{final int price,com;final String gt;PaySheet({required this.price,required this.com,required this.gt});@override Widget build(BuildContext c){return Container(padding:EdgeInsets.all(20),child:Column(mainAxisSize:MainAxisSize.min,children:[Text('Bayad ₱$price Commission ₱$com AUTO $gt',style:TextStyle(fontWeight:FontWeight.bold)),Wrap(spacing:5,children:['GCash','Maya','GoTyme','BPI','BDO','Metrobank'].map((e)=>Chip(label:Text(e))).toList()),ElevatedButton(onPressed:(){Navigator.pop(c);ScaffoldMessenger.of(c).showSnackBar(SnackBar(content:Text('Bayad na!')));},child:Text('BAYARAN ₱$price'))]));}}
