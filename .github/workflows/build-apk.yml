@@ -12,14 +12,11 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Fix android folder missing
+      - name: Fix android missing build.gradle
         run: |
-          if [ ! -f "android/app/build.gradle" ]; then
-            echo "Android folder missing - recreating..."
-            rm -rf android
-            flutter create . --platforms=android --project-name pinas_paupa --org com.pinaspaupa
-          fi
-          ls android/app/build.gradle
+          rm -rf android
+          flutter create . --platforms=android --org com.pinaspaupa --project-name pinas_paupa
+          cat android/app/build.gradle | head -n 20
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
