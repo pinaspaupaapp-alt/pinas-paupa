@@ -1,0 +1,26 @@
+name: Adopt New Flutter
+on: workflow_dispatch
+jobs:
+  adopt:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: |
+          rm -rf android
+          flutter create . --platforms=android --project-name pinas_paupa
+          flutter pub get
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add android pubspec.yaml
+          git commit -m "Adopt new Flutter - recreate android folder for Flutter 3.32" || echo "no changes"
+          git push
